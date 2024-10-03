@@ -121,8 +121,7 @@ reg [COLOR_DEPTH*3-1:0] sd_out;
 // ==================================================================
 
 // 2 lines of 2**HCNT_WIDTH pixels 3*COLOR_DEPTH bit RGB
-(* ramstyle = "no_rw_check" *) reg [COLOR_DEPTH*3-1:0] sd_buffer[2*2**HCNT_WIDTH];
-
+(* ramstyle = "no_rw_check" *) reg [COLOR_DEPTH*3-1:0] sd_buffer[0:2*2**HCNT_WIDTH]; // RB fixed Vivado error "single value range is not allowed in this mode of verilog"
 
 // use alternating sd_buffers when storing/reading data   
 reg        line_toggle;
