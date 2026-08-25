@@ -12,8 +12,9 @@ their own subdirectories).
 - Clocking: `clk_wiz_0` MMCM 100 MHz → 36 MHz (`DIVCLK_DIVIDE=5`,
   `CLKFBOUT_MULT_F=49.5`, `CLKOUT0_DIVIDE_F=27.5`); core clocked at 18 MHz
   (36 ÷ 2), keyboard logic at 9 MHz
-- Video: imported MiST `scandoubler.v` → 31 kHz progressive VGA; F8 key
-  (`fn_toggle(7)`) selects 15 kHz TV mode (native rate, composite sync on HS)
+- Video: MiST `scandoubler.v` (patched in-place at `mist/`) → 31 kHz
+  progressive VGA; F8 key (`fn_toggle(7)`) selects 15 kHz TV mode (native
+  rate, composite sync on HS)
 - Design details and porting decisions: [PORTING_SPEC.md](PORTING_SPEC.md)
 
 ## Features supported
@@ -33,6 +34,14 @@ their own subdirectories).
 | `btnC` | reset | active-high |
 | `sw(15)` | `O_PMODAMP2_GAIN` | AMP gain: 0 = 12 dB, 1 = 6 dB |
 | `sw(14)` | `O_PMODAMP2_SHUTD` | AMP shutdown: 0 = off, 1 = on |
+| `sw(12)` | Cabinet | UP = upright, DOWN = cocktail |
+| `sw(11)` | Test mode | UP = off (normal), DOWN = on |
+| `sw(10)` | Freeze | UP = off (normal), DOWN = on |
+| `sw(9)` | Demo sound | UP = off, DOWN = on (normal) |
+| `sw(8:7)` | Difficulty | UP/UP = normal (see PORTING_SPEC §7.3) |
+| `sw(6:5)` | Lives | DOWN/DOWN = 2 lives (normal) |
+| `sw(4:2)` | Bonus | DOWN/DOWN/DOWN = 10k (normal) |
+| `sw(1:0)` | Reserved | Tied to '1' |
 | F8 key (`fn_toggle(7)`) | display mode | 0 = 31 kHz VGA, 1 = 15 kHz TV (csync on HS) |
 | `JA(0..4)` | joystick right/left/down/up/fire (JA1–4, JA7) | active-low (switch to GND); combos: fire+left = start1, fire+right = start2, fire+up = coin |
 | `ps2_dat`/`ps2_clk` (JB) | PS/2 keyboard | key map below |
@@ -53,8 +62,8 @@ No download step — the upstream tree is checked in and *is* this directory.
 From here:
 
 ```
-make setup         # tree sanity check, then contrib/tools/prep_roms.sh
-make create_prj    # stage .xpr / XDC / scandoubler import (+ Vivado parser fix)
+make setup         # tree sanity check, apply patches (scandoubler + dipswitch), then prep_roms
+make create_prj    # stage .xpr / XDC (scandoubler referenced directly from mist/)
 make clk_wiz       # generate the clk_wiz_0 MMCM IP (Vivado batch, from /tmp)
 make patch         # author/place the arcade_galaga_basys3.vhd top level
 make synth         # synthesis only; or: make bitstream
@@ -65,12 +74,6 @@ make synth         # synthesis only; or: make bitstream
 and generates the PROM VHDL referenced in place by the project. Romsets
 resolve as `$ROMZIP1` → `~/roms/galaga.zip` and `$ROMZIP2` →
 `~/roms/galagamw.zip`.
-
-Verify the imported-scandoubler parser fix took:
-
-```
-grep -n 'sd_buffer\[0:' basys3/arcade_galaga_basys3.srcs/sources_1/imports/mist/scandoubler.v
-```
 
 ## Rom set required
 

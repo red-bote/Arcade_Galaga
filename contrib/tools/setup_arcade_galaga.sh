@@ -3,14 +3,8 @@
 #
 # Unlike the other machines there is no download/extract step: the upstream
 # tree (Somhi's Arcade_Galaga) is checked into the repo and IS this machine
-# directory. This script only sanity-checks key sources and runs
-# contrib/tools/prep_roms.sh.
-#
-# No fix patches are applied to the pristine tree: Somhi's fork already
-# contains all three galaga.vhd fixes the Midway port needed (video_hs/vs
-# wiring, credit mode, bgpalette xor shape — see PORTING_SPEC.md §8). The only
-# patch, scandoubler_fix.patch, is applied later by create_project.sh to the
-# imported copy of mist/scandoubler.v, never to the pristine tree.
+# directory. This script sanity-checks key sources, applies the Vivado parser
+# fix to mist/scandoubler.v, and runs contrib/tools/prep_roms.sh.
 #
 # Roms and the generated PROM VHDL stay local (never distributed).
 
@@ -32,5 +26,11 @@ for f in \
 done
 
 printf '==> Upstream Arcade_Galaga tree verified in place\n'
+
+printf '==> Applying Vivado parser fix to mist/scandoubler.v\n'
+(cd "$ROOT" && patch -p1 --forward < contrib/code/scandoubler_fix.patch)
+
+printf '==> Promoting dip-switch ports from hard-coded to entity-level on rtl_dar/galaga.vhd\n'
+(cd "$ROOT" && patch -p1 --forward < contrib/code/galaga_dipswitch.patch)
 
 exec "$ROOT/contrib/tools/prep_roms.sh"

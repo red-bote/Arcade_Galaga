@@ -1,5 +1,5 @@
---- a/arcade_galaga_basys3.srcs/sources_1/imports/mist/scandoubler.v	2026-08-21 15:00:00.000000000 -0400
-+++ b/arcade_galaga_basys3.srcs/sources_1/imports/mist/scandoubler.v	2026-08-21 15:00:00.000000000 -0400
+--- a/mist/scandoubler.v	2026-08-21 15:00:00.000000000 -0400
++++ b/mist/scandoubler.v	2026-08-21 15:00:00.000000000 -0400
 @@ -121,7 +121,7 @@
  // ==================================================================
  

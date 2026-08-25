@@ -1,7 +1,7 @@
 diff --git a/rtl_dar/galaga_de10_lite.vhd b/rtl_dar/galaga_de10_lite.vhd
 --- a/rtl_dar/galaga_de10_lite.vhd
 +++ b/rtl_dar/galaga_de10_lite.vhd
-@@ -1,341 +1,304 @@
+@@ -1,341 +1,310 @@
 ----------------------------------------------------------------------------------
 --- DE10_lite Top level for Galaga Midway by Dar (darfpga@aol.fr) (06/11/2017)
 --- http://darfpga.blogspot.fr
@@ -352,7 +352,7 @@ diff --git a/rtl_dar/galaga_de10_lite.vhd b/rtl_dar/galaga_de10_lite.vhd
 +--  - Atari-style joystick on JA, OR-merged with PS/2 keyboard (JB)
 +--    (Somhi kbd_joystick: arrows/space; F3 coin, F4 start1, F5 start2)
 +--  - Mono PWM audio on PmodAMP2 (JC); sw14 = shutdown, sw15 = gain select
-+--  - 31 kHz VGA on the Basys3 VGA connector via the imported MiST scandoubler;
++--  - 31 kHz VGA on the Basys3 VGA connector via MiST scandoubler (patched in-place at mist/);
 +--    F8 key toggles to 15 kHz TV (native RGB + composite sync on HS)
 +--  - btnC = reset (core also held in reset while the MMCM unlocks)
 +---------------------------------------------------------------------------------
@@ -510,10 +510,16 @@ diff --git a/rtl_dar/galaga_de10_lite.vhd b/rtl_dar/galaga_de10_lite.vhd
 + start2       => kb_start2 or (not JA(4) and not JA(0)),
 + left2        => kb_left   or  not JA(1),
 + right2       => kb_right  or  not JA(0),
-+ fire2        => kb_fire   or  not JA(4)
++ fire2        => kb_fire   or  not JA(4),
++
++ -- Dip switches: inverted polarity so all-down = normal defaults (sw12..sw0)
++ -- sw12=cab(Upright/Cocktail) sw11=Test sw10=Freeze sw9=DemoSound
++ -- sw8:7=Difficulty sw6:5=Lives sw4:2=Bonus sw1:0=reserved
++ dip_switch_a => sw(12) & '1' & not sw(11) & not sw(10) & not sw(9) & '1' & sw(8 downto 7),
++ dip_switch_b => sw(6 downto 5) & sw(4 downto 2) & "111"
 +);
 +
-+-- 31 kHz VGA via the imported MiST scandoubler.
++-- 31 kHz VGA via the MiST scandoubler (patched in-place at mist/).
 +-- Pad the core's 3/3/2-bit RGB to 6 bits by MSB replication; force black during blank.
 +vga_r_i <= r & r     when blankn = '1' else "000000";
 +vga_g_i <= g & g     when blankn = '1' else "000000";
