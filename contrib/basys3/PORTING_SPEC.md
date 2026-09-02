@@ -14,7 +14,7 @@ Target: Digilent Basys 3 (`xc7a35tcpg236-1`), Vivado 2020.2, VHDL target languag
 ```
 Arcade_Galaga/
 ├── rtl_dar/              Dar's RTL (upstream, patched via contrib/)
-│   ├── galaga.vhd           Core entity (dip_switch_a/b promoted to ports by patch)
+│   ├── galaga.vhd           Core entity (upstream; copied + patched into basys3/ by create_project.sh)
 │   ├── galaga_de2.vhd       DE2 top-level (original)
 │   ├── galaga_de10_lite.vhd DE10-Lite wrapper (diff base, stale)
 │   ├── gen_video.vhd        H/V counters, blanking, syncs
@@ -40,6 +40,7 @@ Arcade_Galaga/
 │   ├── arcade_galaga_basys3.xpr
 │   ├── arcade_galaga_basys3.srcs/
 │   │   ├── sources_1/new/arcade_galaga_basys3.vhd
+│   │   ├── sources_1/imports/rtl_dar/galaga.vhd
 │   │   ├── sources_1/imports/clk_wiz_0/*.v
 │   │   └── constrs_1/imports/digilent-xdc-master/Basys-3-Master.xdc
 ├── contrib/
@@ -70,9 +71,12 @@ Arcade_Galaga/
 
 ### Step 1: `make setup`
 - Sanity-checks key upstream source files
-- Applies `scandoubler_fix.patch` to `mist/scandoubler.v`
-- Applies `galaga_dipswitch.patch` to `rtl_dar/galaga.vhd`
+- Applies `scandoubler_fix.patch` to `mist/scandoubler.v` (skips if already fixed)
 - Runs `prep_roms.sh` to compile `make_vhdl_prom` and generate all PROM VHDL from ROM zips
+
+### Step 1b: `make create_prj`
+- Copies `rtl_dar/galaga.vhd` into `sources_1/imports/rtl_dar/`, normalizes CRLF→LF
+- Applies `galaga_dipswitch.patch` to the copy (not the upstream file)
 
 ### Step 2: `make clk_wiz`
 - Creates `clk_wiz_0` MMCM IP stubs
@@ -157,6 +161,19 @@ Original hard-coded values: `dip_switch_a = "11110111"`, `dip_switch_b = "100101
 
 Note: Galaga has no up/down movement — only left, right, and fire.
 
+### Buttons (Basys3, active-high)
+
+| Button | Function |
+|--------|----------|
+| btnU | Coin |
+| btnD | Coin |
+| btnL | Start 1 player |
+| btnR | Start 2 players |
+| btnC | Reset (also in the core reset path) |
+
+Directions and fire stay on the JA joystick / keyboard. Buttons are OR-merged
+with the PS/2 F-keys and JA combos.
+
 ### Joystick (JA Pmod, active-low)
 
 | JA Pin | Function |
@@ -175,7 +192,7 @@ Combo mappings (OR-merged with keyboard):
 ## 7. VGA Output
 
 - 12-bit VGA (4 bits per R/G/B channel)
-- Scandoubler: MiST `scandoubler.v` (patched in-place by `scandoubler_fix.patch`)
+- Scandoubler: MiST `scandoubler.v` (upstream already fixed; patch skipped by setup)
 - Input: core's 3/3/2-bit RGB padded to 6 bits by MSB replication; forced black during blank
 - Output: 31 kHz VGA (scan-doubled 15 kHz core output)
 - F8 key toggles display mode:
@@ -197,10 +214,10 @@ Combo mappings (OR-merged with keyboard):
 - Applied in-place during `make setup`
 
 ### DIP Switch Promotion (`contrib/code/galaga_dipswitch.patch`)
-- **File**: `rtl_dar/galaga.vhd`
+- **Base**: `rtl_dar/galaga.vhd` (copied to `sources_1/imports/rtl_dar/galaga.vhd` by `create_project.sh`)
 - **Change**: Promotes `dip_switch_a` and `dip_switch_b` from hard-coded internal signals to entity-level input ports
 - **Reason**: Allows the top-level wrapper to drive dip switch values from physical switches
-- Applied during `make setup`
+- Applied to the imported copy during `make create_prj` (not in-place on the upstream file)
 
 ### Basys3 Wrapper (`contrib/basys3/code/galaga_de10_lite_to_basys3.patch`)
 - **Base**: `rtl_dar/galaga_de10_lite.vhd` (DE10-Lite wrapper, diff reference only)
@@ -209,7 +226,7 @@ Combo mappings (OR-merged with keyboard):
 
 ## 10. Vivado Project
 
-- `.xpr` references `$PPRDIR/../` for all RTL files (one level up from `basys3/`)
+- `.xpr` references `$PSRCDIR/sources_1/imports/` for imported RTL sources
 - Scandoubler referenced directly: `$PPRDIR/../mist/scandoubler.v`
 - Top module: `arcade_galaga_basys3`
 - Part: `xc7a35tcpg236-1`

@@ -28,9 +28,10 @@ done
 printf '==> Upstream Arcade_Galaga tree verified in place\n'
 
 printf '==> Applying Vivado parser fix to mist/scandoubler.v\n'
-(cd "$ROOT" && patch -p1 --forward < contrib/code/scandoubler_fix.patch)
-
-printf '==> Promoting dip-switch ports from hard-coded to entity-level on rtl_dar/galaga.vhd\n'
-(cd "$ROOT" && patch -p1 --forward < contrib/code/galaga_dipswitch.patch)
+if grep -q 'sd_buffer\[0:2\*2\*\*HCNT_WIDTH\]' "$ROOT/mist/scandoubler.v"; then
+    printf '    already fixed, skipping\n'
+else
+    (cd "$ROOT" && patch -p1 --forward < contrib/code/scandoubler_fix.patch)
+fi
 
 exec "$ROOT/contrib/tools/prep_roms.sh"

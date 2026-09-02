@@ -46,6 +46,7 @@ cat > "$TARGET" <<'EOF'
 --  - 31 kHz VGA on the Basys3 VGA connector via MiST scandoubler (patched in-place at mist/);
 --    F8 key toggles to 15 kHz TV (native RGB + composite sync on HS)
 --  - btnC = reset (core also held in reset while the MMCM unlocks)
+--  - btnU/btnD = coin, btnL = start1P, btnR = start2P (active-high)
 ---------------------------------------------------------------------------------
 -- Educational use only
 -- Do not redistribute synthetized file with roms
@@ -64,6 +65,10 @@ port(
  clk            : in  std_logic;
  sw             : in  std_logic_vector(15 downto 0);
  btnC           : in  std_logic;
+ btnU           : in  std_logic;
+ btnD           : in  std_logic;
+ btnL           : in  std_logic;
+ btnR           : in  std_logic;
 
  JA             : in  std_logic_vector(4 downto 0);  -- joystick
  ps2_dat        : in  std_logic;
@@ -193,12 +198,12 @@ port map(
  b_test       => '1',
  b_svce       => '1',
 
- coin         => kb_coin   or (not JA(4) and not JA(3)),
- start1       => kb_start1 or (not JA(4) and not JA(1)),
+ coin         => kb_coin   or btnU or btnD,
+ start1       => kb_start1 or btnL,
  left1        => kb_left   or  not JA(1),
  right1       => kb_right  or  not JA(0),
  fire1        => kb_fire   or  not JA(4),
- start2       => kb_start2 or (not JA(4) and not JA(0)),
+ start2       => kb_start2 or btnR,
  left2        => kb_left   or  not JA(1),
  right2       => kb_right  or  not JA(0),
  fire2        => kb_fire   or  not JA(4),

@@ -12,7 +12,7 @@ their own subdirectories).
 - Clocking: `clk_wiz_0` MMCM 100 MHz → 36 MHz (`DIVCLK_DIVIDE=5`,
   `CLKFBOUT_MULT_F=49.5`, `CLKOUT0_DIVIDE_F=27.5`); core clocked at 18 MHz
   (36 ÷ 2), keyboard logic at 9 MHz
-- Video: MiST `scandoubler.v` (patched in-place at `mist/`) → 31 kHz
+- Video: MiST `scandoubler.v` (upstream already fixed) → 31 kHz
   progressive VGA; F8 key (`fn_toggle(7)`) selects 15 kHz TV mode (native
   rate, composite sync on HS)
 - Design details and porting decisions: [PORTING_SPEC.md](PORTING_SPEC.md)
@@ -32,6 +32,10 @@ their own subdirectories).
 |---|---|---|
 | `clk` (W5) | 100 MHz oscillator | into `clk_wiz_0` |
 | `btnC` | reset | active-high |
+| `btnU` | coin | active-high |
+| `btnD` | coin | active-high |
+| `btnL` | start 1 player | active-high |
+| `btnR` | start 2 players | active-high |
 | `sw(15)` | `O_PMODAMP2_GAIN` | AMP gain: 0 = 12 dB, 1 = 6 dB |
 | `sw(14)` | `O_PMODAMP2_SHUTD` | AMP shutdown: 0 = off, 1 = on |
 | `sw(12)` | Cabinet | UP = upright, DOWN = cocktail |
@@ -62,8 +66,8 @@ No download step — the upstream tree is checked in and *is* this directory.
 From here:
 
 ```
-make setup         # tree sanity check, apply patches (scandoubler + dipswitch), then prep_roms
-make create_prj    # stage .xpr / XDC (scandoubler referenced directly from mist/)
+make setup         # tree sanity check, detect-and-skip patches, then prep_roms
+make create_prj    # stage .xpr / XDC, import galaga.vhd → sources_1/imports/
 make clk_wiz       # generate the clk_wiz_0 MMCM IP (Vivado batch, from /tmp)
 make patch         # author/place the arcade_galaga_basys3.vhd top level
 make synth         # synthesis only; or: make bitstream

@@ -1,15 +1,15 @@
-clean.sh
-proms
-galaga_deca_tests_hdmi.vhd
-output_files
-*.cache
-*.gen
-*.hw
-*.runs
-*.sim
-*.ip_user_files
-*.srcs
-gwsynthesis
-pnr
-temp
-*.gprj.user
+# Arcade_Galaga Basys3 port
+#
+# Ignore the whole Vivado build tree for the Basys3 project (project dirs,
+# runs, artifacts). The .xpr is regenerated from contrib/basys3/vivado/ by
+# make create_prj; the top level by make patch.
+basys3/
+
+# Generated PROM VHDL, intermediate ROM binaries and the unzipped romset.
+# All produced by make setup / prep_roms.sh into tools/galaga_unzip/.
+# (tracked upstream files there — make_galaga_proms.bat, make_galaga_proms.sh,
+# make_vhdl_prom, make_vhdl_prom.exe — are unaffected by these patterns)
+tools/galaga_unzip/*.vhd
+tools/galaga_unzip/*.bin
+tools/galaga_unzip/gg1_*
+tools/galaga_unzip/prom-*

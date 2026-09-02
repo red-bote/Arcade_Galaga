@@ -1,5 +1,5 @@
---- a/rtl_dar/galaga.vhd
-+++ b/rtl_dar/galaga.vhd
+--- a/arcade_galaga_basys3.srcs/sources_1/imports/rtl_dar/galaga.vhd
++++ b/arcade_galaga_basys3.srcs/sources_1/imports/rtl_dar/galaga.vhd
 @@ -127,7 +127,9 @@
   start2         : in std_logic;
   left2          : in std_logic;
@@ -28,4 +28,3 @@
 -dip_switch_b <= "10010111"; --lives:7-6/ bonus:5-3 / coinage:2-0
  dip_switch_do <= 	dip_switch_a(to_integer(unsigned(mux_addr(3 downto 0)))) & 
  									dip_switch_b(to_integer(unsigned(mux_addr(3 downto 0))));
- 
