@@ -21,7 +21,7 @@ their own subdirectories).
 
 - Full Namco Galaga hardware: 3× Z80 (T80 cores), custom logic, Namco WSG
   audio, star field generator
-- PS/2 keyboard OR-merged with an Atari-style joystick on JA
+- USB keyboard (J2 USB-HID host, PIC24FJ128 → PS/2 on C17/B17) OR-merged with an Atari-style joystick on JA
 - Mono PWM audio on PmodAMP2 (JC)
 - Two display modes selected by F8 key (`fn_toggle(7)`)
 - Reset via `btnC` (core also held in reset while the MMCM unlocks)
@@ -48,7 +48,7 @@ their own subdirectories).
 | `sw(1:0)` | Reserved | Tied to '1' |
 | F8 key (`fn_toggle(7)`) | display mode | 0 = 31 kHz VGA, 1 = 15 kHz TV (csync on HS) |
 | `JA(0..4)` | joystick right/left/down/up/fire (JA1–4, JA7) | active-low (switch to GND); combos: fire+left = start1, fire+right = start2, fire+up = coin |
-| `ps2_dat`/`ps2_clk` (JB) | PS/2 keyboard | key map below |
+| `ps2_dat`/`ps2_clk` (C17/B17) | USB keyboard (J2 USB-HID) | key map below; PIC24 emulates PS/2 to the FPGA |
 | JC1/JC2/JC4 | `O_PMODAMP2_AIN`/`GAIN`/`SHUTD` | PWM audio out |
 | VGA connector | `vga_r/g/b(3:0)`, `vga_hs`, `vga_vs` | 4-4-4 RGB |
 

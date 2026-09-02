@@ -19,7 +19,7 @@ Arcade_Galaga/
 │   ├── galaga_de10_lite.vhd DE10-Lite wrapper (diff base, stale)
 │   ├── gen_video.vhd        H/V counters, blanking, syncs
 │   ├── gen_ram.vhd          Generic dual-port RAM
-│   ├── io_ps2_keyboard.vhd  PS/2 keyboard controller
+│   ├── io_ps2_keyboard.vhd  PS/2 keyboard controller (used by USB-HID path)
 │   ├── kbd_joystick.vhd     Somhi scancode-to-joystick + F-key decoder
 │   ├── mb88.vhd             Fujitsu MB88 4-bit MCU (Namco 54XX)
 │   ├── sound_machine.vhd    Namco WSG waveform synthesizer
@@ -147,7 +147,7 @@ Original hard-coded values: `dip_switch_a = "11110111"`, `dip_switch_b = "100101
 
 ## 6. Input Mapping
 
-### PS/2 Keyboard (Somhi kbd_joystick interface)
+### USB Keyboard (Basys3 J2 USB-HID host → PS/2 on C17/B17)
 
 | Key | Function |
 |-----|----------|
@@ -172,7 +172,7 @@ Note: Galaga has no up/down movement — only left, right, and fire.
 | btnC | Reset (also in the core reset path) |
 
 Directions and fire stay on the JA joystick / keyboard. Buttons are OR-merged
-with the PS/2 F-keys and JA combos.
+with the F-keys and JA combos.
 
 ### Joystick (JA Pmod, active-low)
 

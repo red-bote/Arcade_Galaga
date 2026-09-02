@@ -40,8 +40,9 @@ cat > "$TARGET" <<'EOF'
 --
 -- Ported from galaga_de10_lite.vhd per Arcade_Galaga/PORTING_SPEC.md:
 --  - 100 MHz board oscillator, clk_wiz_0 MMCM derives 36 MHz
---  - Atari-style joystick on JA, OR-merged with PS/2 keyboard (JB)
---    (Somhi kbd_joystick: arrows/space; F3 coin, F4 start1, F5 start2)
+--  - Atari-style joystick on JA, OR-merged with USB keyboard (J2 USB-HID
+--    host via PIC24FJ128 → PS/2 on C17/B17: arrows/space; F3 coin, F4 start1,
+--    F5 start2)
 --  - Mono PWM audio on PmodAMP2 (JC); sw14 = shutdown, sw15 = gain select
 --  - 31 kHz VGA on the Basys3 VGA connector via MiST scandoubler (patched in-place at mist/);
 --    F8 key toggles to 15 kHz TV (native RGB + composite sync on HS)
